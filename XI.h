@@ -158,8 +158,9 @@ SOFTWARE.
 #define XI_Add_DevicePresenceNotify_Minor	4
 
 #define DEVICE_RESOLUTION	1
-#define DEVICE_TOUCHSCREEN      2
+#define DEVICE_ABS_CALIB        2
 #define DEVICE_CORE             3
+#define DEVICE_ABS_AREA         4
 
 #define NoSuchExtension		1
 
