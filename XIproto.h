@@ -72,8 +72,9 @@ SOFTWARE.
 
 #define numInputClasses 7
 
-#define IEVENTS		16
+#define IEVENTS		17
 #define IERRORS		5
+#define IREQUESTS       41
 
 #define CLIENT_REQ		1
 
@@ -114,6 +115,8 @@ struct tmask
 #define XI_DeviceKeystateNotify		13
 #define XI_DeviceButtonstateNotify	14
 #define XI_DevicePresenceNotify		15
+#define XI_DevicePropertyNotify         16
+
 
 /*********************************************************
  *
@@ -156,6 +159,13 @@ struct tmask
 #define X_SetDeviceValuators		33
 #define X_GetDeviceControl		34
 #define X_ChangeDeviceControl		35
+/* XI 1.5 */
+#define X_ListDeviceProperties          36
+#define X_QueryDeviceProperty           37
+#define X_ConfigureDeviceProperty       38
+#define X_ChangeDeviceProperty          39
+#define X_DeleteDeviceProperty          40
+#define X_GetDeviceProperty             41
 
 /*********************************************************
  *
@@ -1413,6 +1423,156 @@ typedef struct {
     CARD16          pad1 B16;
 } xDeviceEnableCtl;
 
+/* XI 1.5 */
+
+/*********************************************************
+ *
+ * ListDeviceProperties.
+ *
+ */
+
+typedef struct {
+    CARD8       reqType;        /* input extension major opcode */
+    CARD8       ReqType;        /* always X_ListDeviceProperties */
+    CARD16      length B16;
+    CARD8       deviceid;
+    CARD8       pad0;
+    CARD16      pad1 B16;
+} xListDevicePropertiesReq;
+
+typedef struct {
+    CARD8       repType;        /* X_Reply                       */
+    CARD8       RepType;        /* always X_ListDeviceProperties */
+    CARD16      sequenceNumber B16;
+    CARD32      length B32;
+    CARD16      nAtoms B16;
+    CARD16      pad1 B16;
+    CARD32      pad2 B32;
+    CARD32      pad3 B32;
+    CARD32      pad4 B32;
+    CARD32      pad5 B32;
+    CARD32      pad6 B32;
+} xListDevicePropertiesReply;
+
+/*********************************************************
+ *
+ * QueryDeviceProperty.
+ *
+ */
+
+typedef struct {
+    CARD8       reqType;        /* input extension major opcode */
+    CARD8       ReqType;        /* always X_QueryDeviceProperty */
+    CARD16      length B16;
+    Atom        property B32;
+    CARD8       deviceid;
+    CARD8       pad0;
+    CARD16      pad1 B16;
+} xQueryDevicePropertyReq;
+
+typedef struct {
+    CARD8       repType;        /* X_Reply                        */
+    CARD8       RepType;        /* always X_QueryDeviceProperty */
+    CARD16      sequenceNumber B16;
+    CARD32      length B32;
+    BOOL        pending;
+    BOOL        range;
+    BOOL        immutable;
+    BOOL        fromClient;     /* TRUE if allocated by client */
+    CARD32      pad2 B32;
+    CARD32      pad3 B32;
+    CARD32      pad4 B32;
+    CARD32      pad5 B32;
+    CARD32      pad6 B32;
+} xQueryDevicePropertyReply;
+
+/*********************************************************
+ *
+ * ConfigureDeviceProperty.
+ *
+ */
+
+typedef struct {
+    CARD8       reqType;        /* input extension major opcode */
+    CARD8       ReqType;        /* always X_ConfigureDeviceProperty */
+    CARD16      length B16;
+    Atom        property B32;
+    CARD8       deviceid;
+    BOOL        pending;
+    BOOL        range;
+    CARD8       pad;
+} xConfigureDevicePropertyReq;
+
+/*********************************************************
+ *
+ * ChangeDeviceProperty.
+ *
+ */
+
+typedef struct {
+    CARD8       reqType;        /* input extension major opcode */
+    CARD8       ReqType;        /* always X_ChangeDeviceProperty */
+    CARD16      length B16;
+    Atom        property B32;
+    Atom        type B32;
+    CARD8       deviceid;
+    CARD8       format;
+    CARD8       mode;
+    CARD8       pad;
+    CARD32      nUnits B32;
+} xChangeDevicePropertyReq;
+
+/*********************************************************
+ *
+ * DeleteDeviceProperty.
+ *
+ */
+
+typedef struct {
+    CARD8       reqType;        /* input extension major opcode */
+    CARD8       ReqType;        /* always X_DeleteDeviceProperty */
+    CARD16      length B16;
+    Atom        property B32;
+    CARD8       deviceid;
+    CARD8       pad0;
+    CARD16      pad1 B16;
+} xDeleteDevicePropertyReq;
+
+/*********************************************************
+ *
+ * GetDeviceProperty.
+ *
+ */
+
+typedef struct {
+    CARD8       reqType;        /* input extension major opcode */
+    CARD8       ReqType;        /* always X_ChangeDeviceProperty */
+    CARD16      length B16;
+    Atom        property B32;
+    Atom        type B32;
+    CARD32      longOffset B32;
+    CARD32      longLength B32;
+    CARD8       deviceid;
+    BOOL        delete;
+    BOOL        pending;
+    CARD8       pad;
+} xGetDevicePropertyReq;
+
+typedef struct {
+    CARD8       repType;        /* X_Reply                        */
+    CARD8       RepType;        /* always X_GetDeviceProperty   */
+    CARD16      sequenceNumber B16;
+    CARD32      length B32;
+    Atom        propertyType B32;
+    CARD32      bytesAfter B32;
+    CARD32      nItems B32;
+    CARD8       format;
+    CARD8       deviceid;
+    CARD16      pad1 B16;
+    CARD32      pad2 B32;
+    CARD32      pad3 B32;
+} xGetDevicePropertyReply;
+
 /**********************************************************
  *
  * Input extension events.
@@ -1609,6 +1769,30 @@ typedef struct
     CARD32	pad05 B32;
     CARD32	pad06 B32;
     }  devicePresenceNotify;
+
+/*********************************************************
+ * DevicePropertyNotifyEvent
+ *
+ * Sent whenever a device's property changes.
+ *
+ */
+
+typedef struct
+    {
+    BYTE        type;                /* always GenericEvent */
+    BYTE        state;               /* NewValue or Deleted */
+    CARD16      sequenceNumber B16;
+    CARD32      time B32;
+    Atom        atom B32;            /* affected property */
+    CARD8       deviceid;            /* id of device */
+    CARD8       pad0;
+    CARD16      pad1 B16;
+    CARD32      pad2 B32;
+    CARD32      pad3 B32;
+    CARD32      pad4 B32;
+    CARD32      pad5 B32;
+    } devicePropertyNotify;
+
 
 #undef Window
 #undef Time
