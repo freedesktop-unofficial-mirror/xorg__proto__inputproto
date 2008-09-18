@@ -136,6 +136,7 @@ SOFTWARE.
 #define XI_EYETRACKER	"EYETRACKER"
 #define XI_CURSORKEYS	"CURSORKEYS"
 #define XI_FOOTMOUSE	"FOOTMOUSE"
+#define XI_JOYSTICK	"JOYSTICK"
 
 #define Dont_Check			0
 #define XInput_Initial_Release		1
