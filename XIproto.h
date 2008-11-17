@@ -159,11 +159,9 @@ struct tmask
 #define X_ChangeDeviceControl		35
 /* XI 1.5 */
 #define X_ListDeviceProperties          36
-#define X_QueryDeviceProperty           37
-#define X_ConfigureDeviceProperty       38
-#define X_ChangeDeviceProperty          39
-#define X_DeleteDeviceProperty          40
-#define X_GetDeviceProperty             41
+#define X_ChangeDeviceProperty          37
+#define X_DeleteDeviceProperty          38
+#define X_GetDeviceProperty             39
 
 /*********************************************************
  *
@@ -1454,55 +1452,6 @@ typedef struct {
 
 /*********************************************************
  *
- * QueryDeviceProperty.
- *
- */
-
-typedef struct {
-    CARD8       reqType;        /* input extension major opcode */
-    CARD8       ReqType;        /* always X_QueryDeviceProperty */
-    CARD16      length B16;
-    Atom        property B32;
-    CARD8       deviceid;
-    CARD8       pad0;
-    CARD16      pad1 B16;
-} xQueryDevicePropertyReq;
-
-typedef struct {
-    CARD8       repType;        /* X_Reply                        */
-    CARD8       RepType;        /* always X_QueryDeviceProperty */
-    CARD16      sequenceNumber B16;
-    CARD32      length B32;
-    BOOL        pending;
-    BOOL        range;
-    BOOL        immutable;
-    BOOL        fromClient;     /* TRUE if allocated by client */
-    CARD32      pad2 B32;
-    CARD32      pad3 B32;
-    CARD32      pad4 B32;
-    CARD32      pad5 B32;
-    CARD32      pad6 B32;
-} xQueryDevicePropertyReply;
-
-/*********************************************************
- *
- * ConfigureDeviceProperty.
- *
- */
-
-typedef struct {
-    CARD8       reqType;        /* input extension major opcode */
-    CARD8       ReqType;        /* always X_ConfigureDeviceProperty */
-    CARD16      length B16;
-    Atom        property B32;
-    CARD8       deviceid;
-    BOOL        pending;
-    BOOL        range;
-    CARD8       pad;
-} xConfigureDevicePropertyReq;
-
-/*********************************************************
- *
  * ChangeDeviceProperty.
  *
  */
@@ -1556,8 +1505,7 @@ typedef struct {
 #else
     BOOL        delete;
 #endif
-    BOOL        pending;
-    CARD8       pad;
+    CARD16      pad;
 } xGetDevicePropertyReq;
 
 typedef struct {
