@@ -54,6 +54,7 @@ SOFTWARE.
 #define Window CARD32
 #define Time CARD32
 #define KeyCode CARD8
+#define Atom CARD32
 
 /*********************************************************
  *
