@@ -1799,5 +1799,6 @@ typedef struct
 #undef Window
 #undef Time
 #undef KeyCode
+#undef Atom
 
 #endif
